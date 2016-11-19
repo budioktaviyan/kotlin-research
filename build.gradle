@@ -20,9 +20,11 @@ buildscript {
 
 plugins {
     id 'application'
+    id 'com.github.johnrengelman.shadow' version '1.2.4'
 }
 
 apply plugin: 'kotlin'
+apply plugin: 'kotlin-kapt'
 
 group 'id.jasoet.dagger'
 version '1.0'
@@ -41,6 +43,20 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     compile "org.jetbrains.kotlin:kotlin-runtime:$kotlinVersion"
 }
+
+// Naming and packaging settings for the "shadow jar".
+shadowJar {
+    baseName = 'kotlin'
+    classifier = 'vertx'
+
+    /*manifest {
+        attributes 'Main-Verticle': mainVerticleName
+    }
+    mergeServiceFiles {
+        include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
+    }*/
+}
+
 
 task wrapper(type: Wrapper) {
     gradleVersion = '3.1'

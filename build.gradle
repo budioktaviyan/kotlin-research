@@ -29,32 +29,50 @@ apply plugin: 'kotlin-kapt'
 group 'id.jasoet.dagger'
 version '1.0'
 
-mainClassName = "id.jasoet.dagger.simple.CoffeeApp"
+mainClassName = 'io.vertx.core.Launcher'
+def mainVerticleName = 'io.vertx.example.MainVerticle'
 
 repositories {
     jcenter()
 }
 
 dependencies {
+    compile "io.vertx:vertx-core:$vertxVersion"
+    compile "io.vertx:vertx-web:$vertxVersion"
+    compile "io.vertx:vertx-mongo-client:$vertxVersion"
+
+    compile "nl.komponents.kovenant:kovenant:$kovenantVersion"
+
     compile "com.google.dagger:dagger:$daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+
+    compile "org.apache.commons:commons-lang3:${commonsLangVersion}"
+
     compile "ch.qos.logback:logback-classic:$logbackVersion"
 
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     compile "org.jetbrains.kotlin:kotlin-runtime:$kotlinVersion"
 }
 
-// Naming and packaging settings for the "shadow jar".
+run {
+    args = ['run', mainVerticleName,
+            "--launcher-class=$mainClassName",
+            "--redeploy=src/**/*.*",
+            "--on-redeploy=./gradlew classes"
+    ]
+}
+
 shadowJar {
     baseName = 'kotlin'
     classifier = 'vertx'
 
-    /*manifest {
+    manifest {
         attributes 'Main-Verticle': mainVerticleName
     }
+
     mergeServiceFiles {
         include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
-    }*/
+    }
 }
 
 

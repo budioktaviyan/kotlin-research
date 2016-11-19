@@ -20,7 +20,7 @@ import javax.inject.Named
 class HttpModule {
 
     @Provides
-    internal fun provideIslands(): List<Island> {
+    fun provideIslands(): List<Island> {
         return listOf(
             Island("Kotlin", Country("Russia", "RU")),
             Island("Stewart Island", Country("New Zealand", "NZ")),
@@ -32,7 +32,7 @@ class HttpModule {
 
     @Provides
     @Named("islands")
-    internal fun provideHandlerIslands(mockIslands: List<Island>): Handler<RoutingContext> {
+    fun provideHandlerIslands(mockIslands: List<Island>): Handler<RoutingContext> {
         return Handler { req ->
             req.response().endWithJson(mockIslands)
         }
@@ -40,7 +40,7 @@ class HttpModule {
 
     @Provides
     @Named("root")
-    internal fun provideHandlerRoot(): Handler<RoutingContext> {
+    fun provideHandlerRoot(): Handler<RoutingContext> {
         return Handler { req ->
             req.response().end("Welcome!")
         }
@@ -48,7 +48,7 @@ class HttpModule {
 
     @Provides
     @Named("countries")
-    internal fun provideHandlerCountries(mockIslands: List<Island>): Handler<RoutingContext> {
+    fun provideHandlerCountries(mockIslands: List<Island>): Handler<RoutingContext> {
         return Handler { req ->
             req.response().endWithJson(mockIslands.map { it.country }.distinct().sortedBy { it.code })
         }

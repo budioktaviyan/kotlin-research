@@ -10,6 +10,6 @@ import io.vertx.core.Vertx
  */
 
 fun main(args: Array<String>) {
-//    val mainVerticle = DaggerVerticlesComponent.create().mainVerticle()
-//    Vertx.vertx().deployVerticle(mainVerticle)
+    val mainVerticle = DaggerVerticlesComponent.create().mainVerticle()
+    Vertx.vertx().deployVerticle(mainVerticle)
 }

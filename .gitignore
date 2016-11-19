@@ -15,4 +15,6 @@ gradle-app.setting
 .vertx/
 file-uploads/
 *.iml
+*.ipr
+*.iws
 

@@ -5,6 +5,9 @@ import io.vertx.core.AbstractVerticle
 import io.vertx.core.logging.LoggerFactory
 import io.vertx.core.logging.SLF4JLogDelegateFactory
 import nl.komponents.kovenant.all
+import javax.inject.Inject
+import javax.inject.Named
+import javax.inject.Singleton
 
 /**
  * [Documentation Here]
@@ -12,7 +15,9 @@ import nl.komponents.kovenant.all
  * @author Deny Prasetyo.
  */
 
-class MainVerticle constructor(
+@Singleton
+@Named("mainVerticle")
+class MainVerticle @Inject constructor(
     val httpVerticle: HttpVerticle,
     val formUploadVerticle: FormUploadVerticle) : AbstractVerticle() {
 

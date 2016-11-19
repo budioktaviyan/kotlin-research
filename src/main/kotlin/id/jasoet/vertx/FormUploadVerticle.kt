@@ -11,6 +11,7 @@ import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import nl.komponents.kovenant.all
 import nl.komponents.kovenant.task
+import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
 import kotlin.system.measureTimeMillis
@@ -23,7 +24,7 @@ import kotlin.system.measureTimeMillis
 
 @Singleton
 @Named("formUploadVerticle")
-class FormUploadVerticle constructor() : AbstractVerticle() {
+class FormUploadVerticle @Inject constructor() : AbstractVerticle() {
     private val log = LoggerFactory.getLogger(FormUploadVerticle::class.java)
     private val fileSystem by lazy { vertx.fileSystem() }
     private val config by lazy { config() }
@@ -38,7 +39,7 @@ class FormUploadVerticle constructor() : AbstractVerticle() {
             context
                 .request()
                 .response().putHeader(HttpHeaders.CONTENT_TYPE, "text/html")
-                .end("/io/vertx/example/webroot/index.html".resourceToBuffer())
+                .end("/webroot/index.html".resourceToBuffer())
         }
 
         router.post("/form").handler { context ->

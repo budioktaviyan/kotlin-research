@@ -30,7 +30,7 @@ group 'id.jasoet.dagger'
 version '1.0'
 
 mainClassName = 'io.vertx.core.Launcher'
-def mainVerticleName = 'io.vertx.example.MainVerticle'
+def mainVerticleName = 'id.jasoet.vertx.MainVerticle'
 
 repositories {
     jcenter()

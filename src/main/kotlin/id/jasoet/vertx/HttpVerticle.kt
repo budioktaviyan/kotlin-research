@@ -13,6 +13,7 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
+@Named("httpVerticle")
 class HttpVerticle @Inject constructor(
     @Named("root") val handlerRoot: Handler<RoutingContext>,
     @Named("islands") val handlerIslands: Handler<RoutingContext>,

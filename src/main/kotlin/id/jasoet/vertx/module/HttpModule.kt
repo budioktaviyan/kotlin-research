@@ -6,6 +6,7 @@ import id.jasoet.vertx.Country
 import id.jasoet.vertx.Island
 import id.jasoet.vertx.util.endWithJson
 import io.vertx.core.Handler
+import io.vertx.core.logging.LoggerFactory
 import io.vertx.ext.web.RoutingContext
 import javax.inject.Named
 
@@ -18,6 +19,7 @@ import javax.inject.Named
 
 @Module
 class HttpModule {
+    private val log = LoggerFactory.getLogger(HttpModule::class.java)
 
     @Provides
     fun provideIslands(): List<Island> {

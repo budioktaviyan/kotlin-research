@@ -29,7 +29,6 @@ class FormUploadVerticle @Inject constructor() : AbstractVerticle() {
     private val fileSystem by lazy { vertx.fileSystem() }
     private val config by lazy { config() }
 
-
     override fun start(startFuture: Future<Void>) {
         val httpServer = vertx.createHttpServer()
         val router = Router.router(vertx)
@@ -43,19 +42,24 @@ class FormUploadVerticle @Inject constructor() : AbstractVerticle() {
         }
 
         router.post("/form").handler { context ->
+            log.info("Handle Form Uploads....")
             val tempPath = "/var/tmp"
             val fileUploads = context.fileUploads()
-            val saveFileTasks = fileUploads.map { fileUpload ->
-                task {
-                    val uploadedFile = fileSystem.readFileBlocking(fileUpload.uploadedFileName())
-                    log.info("Receive File ${fileUpload.uploadedFileName()} with ${uploadedFile.length()} bytes")
-                    val fileName = "$tempPath/${fileUpload.fileName()}"
-                    fileSystem.writeFileBlocking(fileName, uploadedFile)
-                    fileName
-                }
-            }
 
             val receiveAndSave = measureTimeMillis {
+                val saveFileTasks = fileUploads
+                    .filter { it.size() > 0 }
+                    .map { fileUpload ->
+                        task {
+                            val uploadedFile = fileSystem.readFileBlocking(fileUpload.uploadedFileName())
+                            log.info("Receive File ${fileUpload.uploadedFileName()} with ${uploadedFile.length()} bytes")
+                            val fileName = "$tempPath/${fileUpload.fileName()}"
+                            fileSystem.writeFileBlocking(fileName, uploadedFile)
+                            fileName
+                        }
+                    }
+
+
                 all(saveFileTasks).success {
                     log.info("Success Save all Attachment [${it.joinToString(",")}]")
                 }.fail { e ->

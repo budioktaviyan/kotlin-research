@@ -8,6 +8,9 @@
     <logger name="io.vertx" level="INFO">
         <appender-ref ref="STDOUT" />
     </logger>
+    <logger name="id.jasoet" level="INFO">
+        <appender-ref ref="STDOUT" />
+    </logger>
     <logger name="io.netty.util.internal.PlatformDependent" level="ERROR">
         <appender-ref ref="STDOUT" />
     </logger>

@@ -3,7 +3,6 @@ package id.jasoet.vertx
 import id.jasoet.vertx.util.vertxTask
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.logging.LoggerFactory
-import io.vertx.core.logging.SLF4JLogDelegateFactory
 import nl.komponents.kovenant.all
 import javax.inject.Inject
 import javax.inject.Named
@@ -23,10 +22,6 @@ class MainVerticle @Inject constructor(
 
     private val log = LoggerFactory.getLogger(MainVerticle::class.java)
 
-    init {
-        System.setProperty(LoggerFactory.LOGGER_DELEGATE_FACTORY_CLASS_NAME, SLF4JLogDelegateFactory::class.java.name)
-    }
-
     override fun start() {
         val deployTasks = arrayOf(
             vertxTask<String> {
@@ -37,9 +32,9 @@ class MainVerticle @Inject constructor(
             }
         )
         all(*deployTasks) success {
-            println("Success Deploy HttpVerticle and FormUploadVerticle")
+            log.info("Success Deploy HttpVerticle and FormUploadVerticle")
         } fail {
-            println("Failed to Deploy HttpVerticle and FormUploadVerticle")
+            log.info("Failed to Deploy HttpVerticle and FormUploadVerticle")
             vertxTask<Void> {
                 vertx.close(it)
             }

@@ -1,0 +1,48 @@
+buildscript {
+    ext {
+        kotlinVersion = '1.0.5-2'
+        vertxVersion = '3.3.3'
+        logbackVersion = '1.1.7'
+        kovenantVersion = '3.3.0'
+        apacheTikaVersion = '1.13'
+        commonsLangVersion = '3.4'
+        daggerVersion = '2.7'
+    }
+
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+}
+
+plugins {
+    id 'application'
+}
+
+apply plugin: 'kotlin'
+
+group 'id.jasoet.dagger'
+version '1.0'
+
+mainClassName = "id.jasoet.dagger.simple.CoffeeApp"
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile "com.google.dagger:dagger:$daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+    compile "ch.qos.logback:logback-classic:$logbackVersion"
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-runtime:$kotlinVersion"
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.1'
+}
+

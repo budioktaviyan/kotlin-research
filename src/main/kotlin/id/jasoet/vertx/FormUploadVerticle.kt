@@ -23,7 +23,7 @@ import kotlin.system.measureTimeMillis
 
 @Singleton
 @Named("formUploadVerticle")
-class FormUploadVerticle : AbstractVerticle() {
+class FormUploadVerticle constructor() : AbstractVerticle() {
     private val log = LoggerFactory.getLogger(FormUploadVerticle::class.java)
     private val fileSystem by lazy { vertx.fileSystem() }
     private val config by lazy { config() }

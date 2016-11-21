@@ -7,6 +7,7 @@ buildscript {
         apacheTikaVersion = '1.13'
         commonsLangVersion = '3.4'
         daggerVersion = '2.7'
+        kmongoVersion = '3.3.5'
     }
 
     repositories {
@@ -47,6 +48,8 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
     compile "org.apache.commons:commons-lang3:${commonsLangVersion}"
+
+    compile "org.litote.kmongo:kmongo-async:${kmongoVersion}"
 
     compile "ch.qos.logback:logback-classic:$logbackVersion"
 

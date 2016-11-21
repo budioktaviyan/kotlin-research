@@ -3,8 +3,11 @@ package id.jasoet.vertx.util
 import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
 import io.vertx.core.buffer.Buffer
+import io.vertx.core.json.JsonObject
 import nl.komponents.kovenant.Promise
 import nl.komponents.kovenant.deferred
+import java.io.InputStreamReader
+import java.nio.charset.StandardCharsets
 
 /**
  * [Documentation Here]
@@ -20,6 +23,12 @@ fun String.resourceToBuffer(): Buffer {
         it.read(byteArray)
     }
     return Buffer.buffer(byteArray)
+}
+
+fun String.toJsonObject(): JsonObject {
+    val inputStream = InputStreamReader(javaClass.getResourceAsStream(this), StandardCharsets.UTF_8)
+    val lines = inputStream.useLines { it.joinToString("") }
+    return JsonObject(lines)
 }
 
 
@@ -42,5 +51,6 @@ fun <T> vertxTask(operation: (Handler<AsyncResult<T>>) -> Unit): Promise<T, Exce
 
     return deferred.promise
 }
+
 
 

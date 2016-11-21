@@ -10,7 +10,6 @@ import javax.inject.Singleton
  * @author Deny Prasetyo.
  */
 
-
 @Singleton
 @Component(modules = arrayOf(DripCoffeeModule::class, PumpModule::class))
 internal interface CoffeeComponent {

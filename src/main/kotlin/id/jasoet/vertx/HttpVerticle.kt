@@ -8,6 +8,8 @@ import io.vertx.core.http.HttpServer
 import io.vertx.core.logging.LoggerFactory
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
+import io.vertx.ext.web.handler.BodyHandler
+import io.vertx.ext.web.handler.StaticHandler
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
@@ -17,7 +19,8 @@ import javax.inject.Singleton
 class HttpVerticle @Inject constructor(
     @Named("root") val handlerRoot: Handler<RoutingContext>,
     @Named("islands") val handlerIslands: Handler<RoutingContext>,
-    @Named("countries") val handlerCountries: Handler<RoutingContext>) : AbstractVerticle() {
+    @Named("countries") val handlerCountries: Handler<RoutingContext>,
+    @Named("fileUpload") val fileUpload: Handler<RoutingContext>) : AbstractVerticle() {
     private val log = LoggerFactory.getLogger(HttpVerticle::class.java)
 
     private val config by lazy {
@@ -45,9 +48,14 @@ class HttpVerticle @Inject constructor(
 
     private fun createRouter(): Router {
         return Router.router(vertx).apply {
+            route("/static/*").handler(StaticHandler.create())
+
             get("/").handler(handlerRoot)
             get("/islands").handler(handlerIslands)
             get("/countries").handler(handlerCountries)
+
+            post("/form").handler(BodyHandler.create().setMergeFormAttributes(true))
+            post("/form").handler(fileUpload)
         }
     }
 

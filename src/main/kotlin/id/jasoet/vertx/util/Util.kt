@@ -2,6 +2,7 @@ package id.jasoet.vertx.util
 
 import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
+import io.vertx.core.buffer.Buffer
 import nl.komponents.kovenant.Promise
 import nl.komponents.kovenant.deferred
 
@@ -11,6 +12,15 @@ import nl.komponents.kovenant.deferred
  * @author Deny Prasetyo.
  */
 
+fun String.resourceToBuffer(): Buffer {
+    val inputStream = javaClass.getResourceAsStream(this)
+    val byteArray = ByteArray(inputStream.available())
+
+    inputStream.use {
+        it.read(byteArray)
+    }
+    return Buffer.buffer(byteArray)
+}
 
 
 fun <T> vertxTask(operation: (Handler<AsyncResult<T>>) -> Unit): Promise<T, Exception> {

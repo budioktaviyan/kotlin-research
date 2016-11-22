@@ -30,7 +30,7 @@ apply plugin: 'kotlin-kapt'
 group 'id.jasoet.dagger'
 version '1.0'
 
-mainClassName = 'io.vertx.core.Launcher'
+mainClassName = 'id.jasoet.vertx.util.VertxLauncher'
 def mainVerticleName = 'id.jasoet.vertx.MainVerticle'
 
 repositories {

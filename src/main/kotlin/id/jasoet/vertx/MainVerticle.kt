@@ -19,10 +19,6 @@ import io.vertx.core.logging.SLF4JLogDelegateFactory
 
 
 class MainVerticle() : AbstractVerticle() {
-    init {
-        System.setProperty(LoggerFactory.LOGGER_DELEGATE_FACTORY_CLASS_NAME, SLF4JLogDelegateFactory::class.java.name)
-    }
-
     override fun start(startFuture: Future<Void>) {
         val deploymentOptions = DeploymentOptions().apply {
             config = "/application-config.json".toJsonObject()
@@ -42,6 +38,7 @@ class MainVerticle() : AbstractVerticle() {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
+            System.setProperty(LoggerFactory.LOGGER_DELEGATE_FACTORY_CLASS_NAME, SLF4JLogDelegateFactory::class.java.name)
             val vertx = Vertx.vertx()
             vertx.deployVerticle(MainVerticle())
         }

@@ -49,7 +49,7 @@ dependencies {
 
     compile "org.apache.commons:commons-lang3:${commonsLangVersion}"
 
-    compile "org.litote.kmongo:kmongo-async:${kmongoVersion}"
+    compile "org.litote.kmongo:kmongo:${kmongoVersion}"
 
     compile "ch.qos.logback:logback-classic:$logbackVersion"
 

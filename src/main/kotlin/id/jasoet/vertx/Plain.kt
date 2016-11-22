@@ -1,5 +1,8 @@
 package id.jasoet.vertx
 
+import org.bson.types.ObjectId
+import org.litote.kmongo.MongoId
+
 /**
  * [Documentation Here]
  *
@@ -7,6 +10,6 @@ package id.jasoet.vertx
  */
 
 
-data class Country(val name: String, val code: String)
+data class Country(val _id: String, val name: String, val code: String)
 
-data class Island(val name: String, val country: Country)
+data class Island(@MongoId val id: ObjectId? = null, val name: String, val country: String)

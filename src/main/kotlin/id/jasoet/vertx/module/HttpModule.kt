@@ -1,5 +1,6 @@
 package id.jasoet.vertx.module
 
+import com.mongodb.client.MongoCollection
 import dagger.Module
 import dagger.Provides
 import id.jasoet.vertx.Country
@@ -7,10 +8,14 @@ import id.jasoet.vertx.Island
 import id.jasoet.vertx.util.endWithJson
 import io.vertx.core.Handler
 import io.vertx.core.Vertx
+import io.vertx.core.json.Json
 import io.vertx.core.logging.LoggerFactory
 import io.vertx.ext.web.RoutingContext
 import nl.komponents.kovenant.all
 import nl.komponents.kovenant.task
+import org.litote.kmongo.MongoOperator.`in`
+import org.litote.kmongo.find
+import org.litote.kmongo.toList
 import javax.inject.Named
 import kotlin.system.measureTimeMillis
 
@@ -26,20 +31,45 @@ class HttpModule(val vertx: Vertx) {
     private val log = LoggerFactory.getLogger(HttpModule::class.java)
 
     @Provides
-    fun provideIslands(): List<Island> {
-        return listOf(
-            Island("Kotlin", Country("Russia", "RU")),
-            Island("Stewart Island", Country("New Zealand", "NZ")),
-            Island("Cockatoo Island", Country("Australia", "AU")),
-            Island("Tasmania", Country("Australia", "AU"))
-        )
+    @Named("countries")
+    fun provideHandlerCountries(@Named("countryCollection") collection: MongoCollection<Country>): Handler<RoutingContext> {
+        return Handler { routingContext ->
+            task {
+                log.info("Fetch all Countries")
+                collection.find().toList()
+            } success {
+                routingContext.response().endWithJson(it)
+            } fail {
+                routingContext.fail(it)
+            }
+        }
     }
 
     @Provides
     @Named("islands")
-    fun provideHandlerIslands(mockIslands: List<Island>): Handler<RoutingContext> {
+    fun provideHandlerIslands(@Named("islandCollection") collection: MongoCollection<Island>,
+                              @Named("countryCollection") countryCollection: MongoCollection<Country>): Handler<RoutingContext> {
         return Handler { routingContext ->
-            routingContext.response().endWithJson(mockIslands)
+            task {
+                log.info("Fetch all Islands")
+                val islands = collection.find().toList()
+
+                val countryNames = islands.map { it.country }.distinct()
+                val query = "{ _id: { $`in`: ${Json.encode(countryNames)} } }"
+                log.info("Fetch Country with query [$query]")
+                val countries = countryCollection.find(query).toList()
+
+                islands.map { island ->
+                    mapOf(
+                        "name" to island.name,
+                        "country" to countries.find { it.code == island.country }
+                    )
+                }
+            } success {
+                routingContext.response().endWithJson(it)
+            } fail {
+                routingContext.fail(it)
+            }
         }
     }
 
@@ -83,15 +113,6 @@ class HttpModule(val vertx: Vertx) {
 
 
             context.response().end("Thank You!. Process need $receiveAndSave ms")
-        }
-    }
-
-    @Provides
-    @Named("countries")
-    fun provideHandlerCountries(mockIslands: List<Island>): Handler<RoutingContext> {
-        return Handler { routingContext ->
-            val countries = mockIslands.map { it.country }.distinct().sortedBy { it.code }
-            routingContext.response().endWithJson(countries)
         }
     }
 

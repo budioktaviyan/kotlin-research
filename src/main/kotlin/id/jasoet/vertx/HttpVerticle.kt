@@ -31,16 +31,16 @@ class HttpVerticle @Inject constructor(val mainRouter: MainRouter) : AbstractVer
                     .listen(config.getInteger("http.port", 9000), it)
             }
 
-        serverTask handle  {
-            if(it.succeeded()){
+        serverTask.handle(
+           success =  {
                 log.info("Listen ${config.getInteger("http.port", 9000)}")
                 startFuture.complete()
-            }else{
-                log.error("Failed to Start HttpServer ${it.cause().message}", it)
-                startFuture.fail(it.cause())
+            },
+            failed = {
+                log.error("Failed to Start HttpServer ${it.message}", it)
+                startFuture.fail(it)
             }
-
-        }
+        )
     }
 
 }

@@ -8,6 +8,8 @@ buildscript {
         commonsLangVersion = '3.4'
         daggerVersion = '2.7'
         kmongoVersion = '3.3.5'
+        morphiaVersion = '1.2.1'
+        hibernateValidatorVersion = '5.3.3.Final'
     }
 
     repositories {
@@ -30,7 +32,7 @@ apply plugin: 'kotlin-kapt'
 group 'id.jasoet.dagger'
 version '1.0'
 
-mainClassName = 'id.jasoet.vertx.util.VertxLauncher'
+mainClassName = 'id.jasoet.vertx.VertxLauncher'
 def mainVerticleName = 'id.jasoet.vertx.MainVerticle'
 
 repositories {
@@ -40,7 +42,6 @@ repositories {
 dependencies {
     compile "io.vertx:vertx-core:$vertxVersion"
     compile "io.vertx:vertx-web:$vertxVersion"
-    compile "io.vertx:vertx-mongo-client:$vertxVersion"
 
     compile "nl.komponents.kovenant:kovenant:$kovenantVersion"
 
@@ -49,7 +50,9 @@ dependencies {
 
     compile "org.apache.commons:commons-lang3:${commonsLangVersion}"
 
-    compile "org.litote.kmongo:kmongo:${kmongoVersion}"
+    compile "org.mongodb.morphia:morphia:${morphiaVersion}"
+    compile "org.mongodb.morphia:morphia-validation:${morphiaVersion}"
+    compile "org.hibernate:hibernate-validator:${hibernateValidatorVersion}"
 
     compile "ch.qos.logback:logback-classic:$logbackVersion"
 

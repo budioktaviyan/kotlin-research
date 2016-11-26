@@ -1,4 +1,4 @@
-package id.jasoet.vertx.util
+package id.jasoet.vertx.extension
 
 import io.vertx.core.http.HttpServerResponse
 import io.vertx.core.json.Json

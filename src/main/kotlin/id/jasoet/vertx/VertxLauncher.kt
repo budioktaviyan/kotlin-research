@@ -1,4 +1,4 @@
-package id.jasoet.vertx.util
+package id.jasoet.vertx
 
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx

@@ -1,6 +1,8 @@
 package id.jasoet.vertx
 
-import id.jasoet.vertx.util.vertxTask
+import id.jasoet.vertx.extension.fail
+import id.jasoet.vertx.extension.futureTask
+import id.jasoet.vertx.extension.success
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Future
 import io.vertx.core.Handler
@@ -13,6 +15,7 @@ import io.vertx.ext.web.handler.StaticHandler
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
+
 
 @Singleton
 @Named("httpVerticle")
@@ -30,7 +33,7 @@ class HttpVerticle @Inject constructor(
     override fun start(startFuture: Future<Void>) {
         val router = createRouter()
         val serverTask =
-            vertxTask<HttpServer> {
+            futureTask<HttpServer> {
                 vertx.createHttpServer()
                     .requestHandler { router.accept(it) }
                     .listen(config.getInteger("http.port", 9000), it)

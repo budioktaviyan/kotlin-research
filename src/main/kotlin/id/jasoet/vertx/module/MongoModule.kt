@@ -2,18 +2,18 @@ package id.jasoet.vertx.module
 
 import com.mongodb.MongoClient
 import com.mongodb.ServerAddress
-import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
 import dagger.Module
 import dagger.Provides
-import id.jasoet.vertx.Country
-import id.jasoet.vertx.Island
+import id.jasoet.vertx.extension.createQuery
+import id.jasoet.vertx.extension.getOne
+import id.jasoet.vertx.model.Country
+import id.jasoet.vertx.model.Island
 import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.core.logging.LoggerFactory
-import org.litote.kmongo.KMongo
-import org.litote.kmongo.getCollection
-import org.litote.kmongo.toList
+import org.mongodb.morphia.Datastore
+import org.mongodb.morphia.Morphia
 import javax.inject.Named
 
 
@@ -42,7 +42,23 @@ class MongoModule(val config: JsonObject) {
             }
         }
 
-        return KMongo.createClient(servers)
+        return MongoClient(servers)
+    }
+
+    @Provides
+    fun provideMorphia(): Morphia {
+        return Morphia().apply {
+            mapPackage("id.jasoet.vertx.model")
+        }
+    }
+
+    @Provides
+    fun provideMorphiaDataStore(morphia: Morphia, client: MongoClient): Datastore {
+        return morphia
+            .createDatastore(client, config.getString("mongodb.database"))
+            .apply {
+                ensureIndexes()
+            }
     }
 
     @Provides
@@ -53,44 +69,32 @@ class MongoModule(val config: JsonObject) {
 
 
     @Provides
-    @Named("countryCollection")
-    fun providesCountryCollection(database: MongoDatabase): MongoCollection<Country> {
-        return database.getCollection<Country>()
-    }
-
-    @Provides
-    @Named("islandCollection")
-    fun providesIslandCollection(database: MongoDatabase): MongoCollection<Island> {
-        return database.getCollection<Island>()
-    }
-
-    @Provides
     @Named("dataInitializer")
-    fun provideInitializer(@Named("countryCollection") countryCollection: MongoCollection<Country>,
-                           @Named("islandCollection") islandCollection: MongoCollection<Island>): () -> Unit {
+    fun provideInitializer(datastore: Datastore): () -> Unit {
 
         val operation: () -> Unit = {
-            val countries = countryCollection.find().toList()
+            val countries = datastore.createQuery<Country>().asList()
             if (countries.isEmpty()) {
                 log.info("Countries Empty, Populate Data")
-                countryCollection.insertMany(listOf(
-                    Country("id", "Indonesia", "id"),
-                    Country("my", "Malaysia", "my"),
-                    Country("sg", "Singapore", "sg"),
-                    Country("uk", "United Kingdom", "uk"),
-                    Country("us", "United States", "us")
-                ))
+                datastore.save(
+                    Country("id", "Indonesia"),
+                    Country("my", "Malaysia"),
+                    Country("sg", "Singapore"),
+                    Country("uk", "United Kingdom"),
+                    Country("us", "United States")
+                )
             }
 
-            val islands = islandCollection.find().toList()
+            val islands = datastore.createQuery<Island>().asList()
             if (islands.isEmpty()) {
                 log.info("Islands Empty, Populate Data")
-                islandCollection.insertMany(listOf(
-                    Island(name = "Java", country = "id"),
-                    Island(name = "Borneo", country = "id"),
-                    Island(name = "Bali", country = "id"),
-                    Island(name = "Lombok", country = "id")
-                ))
+                val indonesia = datastore.getOne<Country>("id") ?: throw Exception("Country [id] not Found!")
+                datastore.save(
+                    Island(name = "Java", country = indonesia),
+                    Island(name = "Borneo", country = indonesia),
+                    Island(name = "Bali", country = indonesia),
+                    Island(name = "Lombok", country = indonesia)
+                )
             }
         }
 

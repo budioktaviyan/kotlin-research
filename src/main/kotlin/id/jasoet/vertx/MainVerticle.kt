@@ -39,6 +39,7 @@ class MainVerticle() : AbstractVerticle() {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
+            println("Application Start =======")
             System.setProperty(LoggerFactory.LOGGER_DELEGATE_FACTORY_CLASS_NAME, SLF4JLogDelegateFactory::class.java.name)
             val vertx = Vertx.vertx()
             vertx.deployVerticle(MainVerticle())

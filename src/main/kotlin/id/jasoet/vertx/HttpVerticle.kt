@@ -1,17 +1,13 @@
 package id.jasoet.vertx
 
-import id.jasoet.vertx.extension.fail
 import id.jasoet.vertx.extension.futureTask
-import id.jasoet.vertx.extension.success
+import id.jasoet.vertx.extension.handle
+import id.jasoet.vertx.router.MainRouter
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Future
-import io.vertx.core.Handler
 import io.vertx.core.http.HttpServer
 import io.vertx.core.logging.LoggerFactory
 import io.vertx.ext.web.Router
-import io.vertx.ext.web.RoutingContext
-import io.vertx.ext.web.handler.BodyHandler
-import io.vertx.ext.web.handler.StaticHandler
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
@@ -19,11 +15,7 @@ import javax.inject.Singleton
 
 @Singleton
 @Named("httpVerticle")
-class HttpVerticle @Inject constructor(
-    @Named("root") val handlerRoot: Handler<RoutingContext>,
-    @Named("islands") val handlerIslands: Handler<RoutingContext>,
-    @Named("countries") val handlerCountries: Handler<RoutingContext>,
-    @Named("fileUpload") val fileUpload: Handler<RoutingContext>) : AbstractVerticle() {
+class HttpVerticle @Inject constructor(val mainRouter: MainRouter) : AbstractVerticle() {
     private val log = LoggerFactory.getLogger(HttpVerticle::class.java)
 
     private val config by lazy {
@@ -31,7 +23,7 @@ class HttpVerticle @Inject constructor(
     }
 
     override fun start(startFuture: Future<Void>) {
-        val router = createRouter()
+        val router = mainRouter.execute(Router.router(vertx))
         val serverTask =
             futureTask<HttpServer> {
                 vertx.createHttpServer()
@@ -39,26 +31,15 @@ class HttpVerticle @Inject constructor(
                     .listen(config.getInteger("http.port", 9000), it)
             }
 
-        serverTask success {
-            log.info("Listen ${config.getInteger("http.port", 9000)}")
-            startFuture.complete()
+        serverTask handle  {
+            if(it.succeeded()){
+                log.info("Listen ${config.getInteger("http.port", 9000)}")
+                startFuture.complete()
+            }else{
+                log.error("Failed to Start HttpServer ${it.cause().message}", it)
+                startFuture.fail(it.cause())
+            }
 
-        } fail {
-            log.error("Failed to Start HttpServer ${it.message}", it)
-            startFuture.fail(it)
-        }
-    }
-
-    private fun createRouter(): Router {
-        return Router.router(vertx).apply {
-            route("/static/*").handler(StaticHandler.create())
-
-            get("/").handler(handlerRoot)
-            get("/islands").handler(handlerIslands)
-            get("/countries").handler(handlerCountries)
-
-            post("/form").handler(BodyHandler.create().setMergeFormAttributes(true))
-            post("/form").handler(fileUpload)
         }
     }
 

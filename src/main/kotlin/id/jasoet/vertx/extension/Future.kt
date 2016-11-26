@@ -32,20 +32,5 @@ infix fun <T> Future<T>.handle(operation: (AsyncResult<T>) -> Unit): Future<T> {
     return this.setHandler(operation)
 }
 
-infix fun <T> Future<T>.success(operation: (T) -> Unit): Future<T> {
-    return this.setHandler {
-        if (it.succeeded()) {
-            operation(it.result())
-        }
-    }
-}
-
-infix fun <T> Future<T>.fail(operation: (Throwable) -> Unit): Future<T> {
-    return this.setHandler {
-        if (it.failed()) {
-            operation(it.cause())
-        }
-    }
-}
 
 

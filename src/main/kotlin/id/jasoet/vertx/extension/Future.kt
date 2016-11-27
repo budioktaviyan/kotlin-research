@@ -32,7 +32,7 @@ infix fun <T> Future<T>.handle(operation: (AsyncResult<T>) -> Unit): Future<T> {
     return this.setHandler(operation)
 }
 
-fun <T> Future<T>.handle(success: (T) -> Unit, failed: (Throwable) -> Unit): Future<T> {
+inline fun <T> Future<T>.handle(crossinline success: (T) -> Unit,crossinline failed: (Throwable) -> Unit): Future<T> {
     return this.setHandler {
         if (it.succeeded()) {
             success(it.result())

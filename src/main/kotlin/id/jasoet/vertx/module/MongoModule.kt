@@ -23,7 +23,7 @@ import javax.inject.Named
  * @author Deny Prasetyo.
  */
 
-@Module
+@Module(includes = arrayOf(VertxModule::class))
 class MongoModule(val config: JsonObject) {
     private val log = LoggerFactory.getLogger(MongoModule::class.java)
 

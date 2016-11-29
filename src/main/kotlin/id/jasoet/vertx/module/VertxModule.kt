@@ -14,7 +14,7 @@ import io.vertx.ext.web.Router
 
 
 @Module
-class HttpModule(val vertx: Vertx) {
+class VertxModule(val vertx: Vertx) {
 
     @Provides
     fun provideFileSystem(): FileSystem {

@@ -2,7 +2,7 @@ package id.jasoet.vertx
 
 import id.jasoet.vertx.extension.toJsonObject
 import id.jasoet.vertx.module.DaggerAppComponent
-import id.jasoet.vertx.module.HttpModule
+import id.jasoet.vertx.module.VertxModule
 import id.jasoet.vertx.module.MongoModule
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.DeploymentOptions
@@ -27,7 +27,7 @@ class MainVerticle() : AbstractVerticle() {
         val appComponent = DaggerAppComponent
             .builder()
             .mongoModule(MongoModule(deploymentOptions.config))
-            .httpModule(HttpModule(vertx))
+            .vertxModule(VertxModule(vertx))
             .build()
 
         val httpVerticle = appComponent.httpVerticle()

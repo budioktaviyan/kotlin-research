@@ -4,7 +4,7 @@ import id.jasoet.vertx.extension.createQuery
 import id.jasoet.vertx.extension.endWithJson
 import id.jasoet.vertx.model.Country
 import id.jasoet.vertx.model.Island
-import id.jasoet.vertx.module.HttpModule
+import id.jasoet.vertx.module.VertxModule
 import io.vertx.core.Handler
 import io.vertx.core.file.FileSystem
 import io.vertx.core.logging.LoggerFactory
@@ -23,7 +23,7 @@ import kotlin.system.measureTimeMillis
 
 
 class MainController @Inject constructor(val fileSystem: FileSystem, val datastore: Datastore) {
-    private val log = LoggerFactory.getLogger(HttpModule::class.java)
+    private val log = LoggerFactory.getLogger(VertxModule::class.java)
 
     fun handlerCountries(): Handler<RoutingContext> {
         return Handler { routingContext ->

@@ -15,7 +15,7 @@ import javax.inject.Singleton
 
 @Singleton
 @Component(
-    modules = arrayOf(HttpModule::class, MongoModule::class)
+    modules = arrayOf(MongoModule::class)
 )
 internal interface AppComponent {
     fun mongoClient(): MongoClient
